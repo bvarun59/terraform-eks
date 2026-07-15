@@ -44,78 +44,65 @@ module "eks" {
 
   source = "../../modules/eks"
 
-  cluster_name = var.cluster_name
+  name               = var.cluster_name
+  kubernetes_version = var.cluster_version
 
-  cluster_version = var.cluster_version
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
 
-  vpc_id = module.vpc.vpc_id
+  eks_managed_node_groups = var.eks_managed_node_groups
 
-  private_subnets = module.vpc.private_subnets
-
-  eks_managed_node_groups = {
-
-    system = {
-
-      instance_types = [
-
-        "t3.medium"
-
-      ]
-
-      desired_size = 2
-
-      min_size = 2
-
-      max_size = 4
-
-      capacity_type = "ON_DEMAND"
-
-    }
-
-    application = {
-
-      instance_types = [
-
-        "m6i.large"
-
-      ]
-
-      desired_size = 3
-
-      min_size = 3
-
-      max_size = 10
-
-      capacity_type = "ON_DEMAND"
-
-    }
-
-  }
-
-  cluster_addons = {
-
-    coredns = {}
-
-    kube-proxy = {}
-
-    vpc-cni = {}
-
-    aws-ebs-csi-driver = {}
-
-  }
+  addons = var.addons
 
   tags = {
-
     Environment = "prod"
-
   }
-
 }
 
-module "iam" {
-  source = "../../modules/iam"
+module "alb_irsa" {
 
-  cluster_name      = module.eks.cluster_name
+  source = "../../modules/irsa"
+
+  role_name = "prod-alb-controller"
+
   oidc_provider_arn = module.eks.oidc_provider_arn
-  oidc_provider     = module.eks.oidc_provider
+
+  namespace = "kube-system"
+
+  service_account = "aws-load-balancer-controller"
+
+  policy_arns = [
+
+    "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
+
+  ]
+
 }
+
+module "application_irsa" {
+
+  source = "../../modules/irsa"
+
+  role_name = "application-s3"
+
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
+  namespace = "application"
+
+  service_account = "backend"
+
+  policy_arns = [
+
+    aws_iam_policy.s3_read.arn
+
+  ]
+
+}
+
+# module "iam" {
+#   source = "../../modules/iam"
+
+#   cluster_name      = module.eks.cluster_name
+#   oidc_provider_arn = module.eks.oidc_provider_arn
+#   oidc_provider     = module.eks.oidc_provider
+# }

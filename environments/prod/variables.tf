@@ -9,3 +9,12 @@ variable "cluster_name" {
 variable "cluster_version" {
   type = string
 }
+
+variable "eks_managed_node_groups" {
+  type = any
+}
+
+variable "addons" {
+  description = "EKS Addons"
+  type        = any
+}
