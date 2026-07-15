@@ -4,20 +4,23 @@ variable "name" {
 }
 
 variable "cidr" {
-  description = "CIDR block"
+  description = "CIDR Block"
   type        = string
 }
 
 variable "azs" {
-  type = list(string)
+  description = "Availability Zones"
+  type        = list(string)
 }
 
 variable "private_subnets" {
-  type = list(string)
+  description = "Private Subnets"
+  type        = list(string)
 }
 
 variable "public_subnets" {
-  type = list(string)
+  description = "Public Subnets"
+  type        = list(string)
 }
 
 variable "enable_nat_gateway" {

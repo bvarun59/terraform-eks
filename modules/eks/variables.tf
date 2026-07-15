@@ -1,9 +1,9 @@
-variable "cluster_name" {
+variable "name" {
   description = "EKS Cluster Name"
   type        = string
 }
 
-variable "cluster_version" {
+variable "kubernetes_version" {
   description = "Kubernetes Version"
   type        = string
 }
@@ -12,18 +12,17 @@ variable "vpc_id" {
   type = string
 }
 
-variable "private_subnets" {
+variable "subnet_ids" {
   type = list(string)
 }
 
 variable "eks_managed_node_groups" {
-  description = "Managed Node Groups"
-  type = any
+  type    = any
+  default = {}
 }
 
-variable "cluster_addons" {
-  description = "EKS Addons"
-  type = any
+variable "addons" {
+  type    = any
   default = {}
 }
 

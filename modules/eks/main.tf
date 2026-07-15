@@ -1,27 +1,45 @@
 module "eks" {
 
   source  = "terraform-aws-modules/eks/aws"
-  version = "~>21.24"
+  version = "~> 21.0"
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
+  ###################################
+  # Cluster
+  ###################################
 
-  vpc_id = var.vpc_id
+  name               = var.name
+  kubernetes_version = var.kubernetes_version
 
-  subnet_ids = var.private_subnets
+  ###################################
+  # Networking
+  ###################################
 
-  enable_irsa = true
+  vpc_id     = var.vpc_id
+  subnet_ids = var.subnet_ids
 
-  cluster_endpoint_public_access = true
+  endpoint_public_access = true
+
+  ###################################
+  # Access
+  ###################################
 
   enable_cluster_creator_admin_permissions = true
 
-  authentication_mode = "API_AND_CONFIG_MAP"
+  ###################################
+  # Addons
+  ###################################
+
+  addons = var.addons
+
+  ###################################
+  # Managed Node Groups
+  ###################################
 
   eks_managed_node_groups = var.eks_managed_node_groups
 
-  cluster_addons = var.cluster_addons
+  ###################################
+  # Tags
+  ###################################
 
   tags = local.common_tags
-
 }

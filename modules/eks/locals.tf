@@ -1,5 +1,4 @@
 locals {
-
   common_tags = merge(
     {
       ManagedBy = "Terraform"
@@ -7,5 +6,4 @@ locals {
     },
     var.tags
   )
-
 }
